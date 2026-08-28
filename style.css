@@ -7,6 +7,35 @@
   --accent: #2f6feb;
   --danger: #c9372c;
   --danger-soft: #fbeae8;
+  --toggle-hover: #eceef1;
+}
+
+/* Dark palette. Used when the system prefers dark and the user has not
+   chosen light. Also used whenever the toggle sets data-theme="dark". */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --border: #30363d;
+    --accent: #1f6feb;
+    --danger: #f85149;
+    --danger-soft: #3d1d1a;
+    --toggle-hover: #21262d;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --border: #30363d;
+  --accent: #1f6feb;
+  --danger: #f85149;
+  --danger-soft: #3d1d1a;
+  --toggle-hover: #21262d;
 }
 
 * {
@@ -30,8 +59,43 @@ body {
   padding: 1.5rem;
 }
 
+/* h1 and the toggle sit on one row. */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.theme-toggle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--toggle-hover);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 h1 {
-  margin: 0 0 1.25rem;
+  margin: 0;
   font-size: 1.5rem;
 }
 

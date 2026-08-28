@@ -2,11 +2,14 @@
   'use strict';
 
   var STORAGE_KEY = 'todo.tasks';
+  var THEME_KEY = 'todo.theme';
 
   var form = document.getElementById('task-form');
   var input = document.getElementById('task-input');
   var list = document.getElementById('task-list');
   var emptyState = document.getElementById('empty-state');
+  var themeToggle = document.getElementById('theme-toggle');
+  var themeIcon = document.getElementById('theme-icon');
 
   var tasks = load();
 
@@ -118,6 +121,66 @@
       toggleTask(item.dataset.id);
     }
   });
+
+  // --- Theme -------------------------------------------------------------
+  // index.html sets data-theme before paint. This keeps the button in sync.
+  // It also saves the choice so it survives a reload.
+
+  function storedTheme() {
+    try {
+      var value = localStorage.getItem(THEME_KEY);
+      return value === 'dark' || value === 'light' ? value : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function systemTheme() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+  }
+
+  function currentTheme() {
+    return document.documentElement.getAttribute('data-theme') || systemTheme();
+  }
+
+  function applyTheme(theme) {
+    var dark = theme === 'dark';
+    // The label names the action, not the current state.
+    var label = dark ? 'Switch to light theme' : 'Switch to dark theme';
+
+    document.documentElement.setAttribute('data-theme', theme);
+    themeIcon.textContent = dark ? '\u2600' : '\u263E';
+    themeToggle.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    themeToggle.setAttribute('aria-label', label);
+    themeToggle.title = label;
+  }
+
+  themeToggle.addEventListener('click', function () {
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch (e) {
+      // Cannot save. The toggle still works for this visit.
+    }
+  });
+
+  // Follow the system until the user picks a theme.
+  if (window.matchMedia) {
+    var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    var onSystemChange = function () {
+      if (!storedTheme()) applyTheme(systemTheme());
+    };
+    if (darkQuery.addEventListener) {
+      darkQuery.addEventListener('change', onSystemChange);
+    } else if (darkQuery.addListener) {
+      darkQuery.addListener(onSystemChange);
+    }
+  }
+
+  applyTheme(storedTheme() || systemTheme());
 
   render();
 })();
