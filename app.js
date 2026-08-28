@@ -6,6 +6,7 @@
 
   var form = document.getElementById('task-form');
   var input = document.getElementById('task-input');
+  var dueInput = document.getElementById('task-due');
   var list = document.getElementById('task-list');
   var emptyState = document.getElementById('empty-state');
   var themeToggle = document.getElementById('theme-toggle');
@@ -24,7 +25,12 @@
           return t && typeof t.text === 'string';
         })
         .map(function (t) {
-          return { id: String(t.id || newId()), text: t.text, done: !!t.done };
+          return {
+            id: String(t.id || newId()),
+            text: t.text,
+            done: !!t.done,
+            due: isDate(t.due) ? t.due : ''
+          };
         });
     } catch (e) {
       return [];
@@ -41,6 +47,43 @@
 
   function newId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function isDate(value) {
+    return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
+  }
+
+  function daysUntil(dueDate) {
+    var parts = dueDate.split('-');
+    // Both dates are built at local midnight. So the gap is in whole days.
+    var target = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((target - today) / 86400000);
+  }
+
+  // Colour step for the deadline. It moves towards red as the date nears.
+  function tierClass(dueDate) {
+    if (!dueDate) return 'due-none';
+    var days = daysUntil(dueDate);
+    if (days < 0) return 'due-overdue';
+    if (days <= 1) return 'due-today';
+    if (days <= 3) return 'due-soon';
+    if (days <= 7) return 'due-week';
+    return 'due-far';
+  }
+
+  // Words for the same thing. Colour alone must not carry the meaning.
+  function dueLabel(dueDate) {
+    if (!dueDate) return 'No deadline. Pick a date.';
+    var days = daysUntil(dueDate);
+    if (days < 0) {
+      var late = Math.abs(days);
+      return 'Overdue by ' + late + (late === 1 ? ' day' : ' days');
+    }
+    if (days === 0) return 'Due today';
+    if (days === 1) return 'Due tomorrow';
+    return 'Due in ' + days + ' days';
   }
 
   function render() {
@@ -62,6 +105,13 @@
       text.className = 'task-text';
       text.textContent = task.text;
 
+      var due = document.createElement('input');
+      due.type = 'date';
+      due.className = 'task-due ' + tierClass(task.due);
+      due.value = task.due;
+      due.title = dueLabel(task.due);
+      due.setAttribute('aria-label', dueLabel(task.due) + ' for "' + task.text + '"');
+
       var del = document.createElement('button');
       del.type = 'button';
       del.className = 'delete-btn';
@@ -70,6 +120,7 @@
 
       item.appendChild(checkbox);
       item.appendChild(text);
+      item.appendChild(due);
       item.appendChild(del);
       list.appendChild(item);
     });
@@ -77,8 +128,8 @@
     emptyState.classList.toggle('hidden', tasks.length > 0);
   }
 
-  function addTask(text) {
-    tasks.push({ id: newId(), text: text, done: false });
+  function addTask(text, due) {
+    tasks.push({ id: newId(), text: text, done: false, due: isDate(due) ? due : '' });
     save();
     render();
   }
@@ -89,6 +140,16 @@
     });
     if (!task) return;
     task.done = !task.done;
+    save();
+    render();
+  }
+
+  function setDue(id, value) {
+    var task = tasks.find(function (t) {
+      return t.id === id;
+    });
+    if (!task) return;
+    task.due = isDate(value) ? value : '';
     save();
     render();
   }
@@ -105,9 +166,17 @@
     event.preventDefault();
     var text = input.value.trim();
     if (!text) return;
-    addTask(text);
+    addTask(text, dueInput.value);
     input.value = '';
+    dueInput.value = '';
     input.focus();
+  });
+
+  // Changing a row's date fires change, not click.
+  list.addEventListener('change', function (event) {
+    if (!event.target.classList.contains('task-due')) return;
+    var item = event.target.closest('.task');
+    if (item) setDue(item.dataset.id, event.target.value);
   });
 
   // One delegated listener, so rows added later need no extra wiring.
