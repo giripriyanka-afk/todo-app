@@ -8,6 +8,11 @@
   --danger: #c9372c;
   --danger-soft: #fbeae8;
   --toggle-hover: #eceef1;
+  --due-far: #656d76;
+  --due-week: #9a6700;
+  --due-soon: #bc4c00;
+  --due-today: #cf222e;
+  --due-overdue: #a40e26;
 }
 
 /* Dark palette. Used when the system prefers dark and the user has not
@@ -23,6 +28,11 @@
     --danger: #f85149;
     --danger-soft: #3d1d1a;
     --toggle-hover: #21262d;
+    --due-far: #8b949e;
+    --due-week: #d29922;
+    --due-soon: #db6d28;
+    --due-today: #f85149;
+    --due-overdue: #ff7b72;
   }
 }
 
@@ -36,6 +46,11 @@
   --danger: #f85149;
   --danger-soft: #3d1d1a;
   --toggle-hover: #21262d;
+  --due-far: #8b949e;
+  --due-week: #d29922;
+  --due-soon: #db6d28;
+  --due-today: #f85149;
+  --due-overdue: #ff7b72;
 }
 
 * {
@@ -100,6 +115,7 @@ h1 {
 }
 
 .task-form {
+  flex-wrap: wrap;
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.25rem;
@@ -107,6 +123,7 @@ h1 {
 
 .task-input {
   flex: 1;
+  min-width: 10rem;
   padding: 0.6rem 0.75rem;
   font: inherit;
   color: inherit;
@@ -201,4 +218,76 @@ h1 {
 
 .empty-state.hidden {
   display: none;
+}
+
+/* Deadline field in the add form. */
+.task-due-input {
+  padding: 0.6rem 0.5rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.task-due-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* Deadline on a task row. It looks like text but stays editable. */
+.task-due {
+  flex: none;
+  width: 8.5rem;
+  padding: 0.2rem 0.35rem;
+  font: inherit;
+  font-size: 0.85rem;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.task-due:hover {
+  border-color: var(--border);
+}
+
+.task-due:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Colour steps as the deadline approaches. */
+.task-due.due-far {
+  color: var(--due-far);
+}
+
+.task-due.due-week {
+  color: var(--due-week);
+}
+
+.task-due.due-soon {
+  color: var(--due-soon);
+}
+
+.task-due.due-today {
+  color: var(--due-today);
+}
+
+.task-due.due-overdue {
+  color: var(--due-overdue);
+  font-weight: 600;
+}
+
+/* No deadline set. Recede so it does not compete with real dates. */
+.task-due.due-none {
+  color: var(--muted);
+  opacity: 0.55;
+}
+
+/* A finished task is not urgent. Drop the colour. */
+.task.done .task-due {
+  color: var(--muted);
+  font-weight: 400;
 }
