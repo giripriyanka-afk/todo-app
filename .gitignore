@@ -1,0 +1,16 @@
+# Environment files — secrets live here
+.env
+.env.local
+.env.*.local
+
+# OS and editor clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dependency folders (used in later sprints)
+node_modules/
+
+# Logs and temp files
+*.log
