@@ -1,0 +1,140 @@
+:root {
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --text: #1f2328;
+  --muted: #8b949e;
+  --border: #e1e4e8;
+  --accent: #2f6feb;
+  --danger: #c9372c;
+  --danger-soft: #fbeae8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 2.5rem 1rem;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 32rem;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+h1 {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+}
+
+.task-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.task-input {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.task-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.add-btn {
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  filter: brightness(1.08);
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.task:last-child {
+  border-bottom: none;
+}
+
+.task-check {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex: none;
+}
+
+.task-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Completed tasks read as struck through and recede visually. */
+.task.done .task-text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.delete-btn {
+  flex: none;
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.empty-state {
+  margin: 0;
+  padding: 0.5rem 0.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.empty-state.hidden {
+  display: none;
+}
